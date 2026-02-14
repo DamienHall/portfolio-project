@@ -4,76 +4,43 @@ import Particle from '../helpers/Particle'
 import QuadTree from '../helpers/QuadTree'
 
 export default function InteractiveBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [dimensions, setDimensions] = useState<{
-    width: number
-    height: number
-  }>({ width: 0, height: 0 })
-  const [particles, setParticles] = useState<Array<Particle>>([])
-  const [animating, setAnimating] = useState<boolean>(false)
-	const mousePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+	const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  // Animation Loop
-  let lastTime: number
-  const animate = (timestamp: number) => {
-    if (particles.length === 0) return
-    setAnimating(true)
+	// useState so that we can re-render canvas to correct size when we change browser size
+	const [dimensions, setDimensions] = useState<{
+		width: number
+		height: number
+	}>({ width: 0, height: 0 })
 
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    const draw = new Draw(ctx)
-
-    if (!lastTime) lastTime = timestamp
-    const deltaTime = timestamp - lastTime
-    lastTime = timestamp
-
-    Particle.updateAll(particles, deltaTime)
-    draw.clear()
-    draw.background(0, 0, dimensions.width, dimensions.height, '#343434')
-
-		const quadTree = new QuadTree(0, 0, dimensions.width, dimensions.height)
-		particles.forEach((particle) => quadTree.insert(particle))
-		// quadTree.render(ctx)
-    Particle.renderAll(particles, ctx)
-		quadTree.findInArea(mousePosition.current.x - 100, mousePosition.current.y - 100, 200, 200).forEach((particle) => {
-			draw.circle(particle.position.x, particle.position.y, particle.size, 'red')
+	// Window resize handling
+	const resize = () => {
+		setDimensions({
+			width: window.innerWidth,
+			height: window.innerHeight,
 		})
-		// draw.rectangle(mousePosition.current.x - 100, mousePosition.current.y - 100, 200, 200, 'rgba(255, 0, 0, 0.5)')
 
-    window.requestAnimationFrame(animate)
-  }
+		const canvas = canvasRef.current
+		if (!canvas) return
 
-  const resize = () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
+		// Set drawing buffer size (Actual res)
+		const dpr = window.devicePixelRatio || 1
+		canvas.width = window.innerWidth * dpr
+		canvas.height = window.innerHeight * dpr
 
-    const dpr = window.devicePixelRatio || 1
+		// Set CSS display size
+		canvas.style.width = `${window.innerWidth}px`
+		canvas.style.height = `${window.innerHeight}px`
 
-    // Set drawing buffer size (actual resolution)
-    canvas.width = window.innerWidth * dpr
-    canvas.height = window.innerHeight * dpr
+		// Scale the context to match the DPI
+		const ctx = canvas.getContext('2d')
+		if (!ctx) return
+		ctx.scale(dpr, dpr)
+	}
 
-    // Set the CSS display size
-    canvas.style.width = `${window.innerWidth}px`
-    canvas.style.height = `${window.innerHeight}px`
-
-    // Scale the context to match the high DPI
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    ctx.scale(dpr, dpr)
-
-    // Update state to trigger re-render
-    setDimensions({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    })
-  }
-
-  useLayoutEffect(() => {
-    resize() // Set the initial size
+	// Setup resize event handling (Runs once)
+	useLayoutEffect(() => {
+		// Set initial size
+		resize()
 
     // Add resize event listener
     window.addEventListener('resize', resize)
@@ -82,60 +49,91 @@ export default function InteractiveBackground() {
     return () => {
       window.removeEventListener('resize', resize)
     }
-  }, [])
+	}, [])
 
-  useEffect(() => {
-    if (particles.length === 0 && dimensions.width > 0 && dimensions.height > 0) {
-      setParticles(
-        Particle.generateRandom(100, dimensions.width, dimensions.height),
-      )
-    }
+	// Mouse data
+	const lastMousePosition = useRef<{
+		x: number
+		y: number
+	}>({ x: 0, y: 0 })
+	const currMousePosition = useRef<{
+		x: number
+		y: number
+	}>({ x: 0, y: 0 })
 
-    const canvas = canvasRef.current
-    if (!canvas) return
+	// Handle mouse move event
+	const handleMouseMove = (event: MouseEvent) => {
+		const canvas = canvasRef.current
+		if (!canvas) return
 
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+		const clientBounds = canvas.getBoundingClientRect()
+		const x = event.clientX - clientBounds.left
+		const y = event.clientY - clientBounds.top
 
-    const draw = new Draw(ctx)
-    // Clear the canvas
-    draw.clear()
+		const ctx = canvas.getContext('2d')
+		if (!ctx) return
 
-    // Draw code goes here use CSS pixel dimensions for draw calls
-    // This is only drawn when the dimensions state changes (i.e., on resize)
-    draw.background(0, 0, dimensions.width, dimensions.height, '#343434')
-    draw.circle(dimensions.width / 2, dimensions.height / 2, 80, '#F9F6EE')
-    Particle.renderAll(particles, ctx)
-  }, [dimensions, particles])
+		lastMousePosition.current = currMousePosition.current
+		currMousePosition.current = { x, y }
+	}
 
-  useEffect(() => {
-    if (particles.length !== 0 && !animating) {
-      console.log('STARTING ANIMATION')
-      console.log(animating)
-      window.requestAnimationFrame(animate)
-    }
-  }, [particles, animating])
-
-  const handleMouseMove = (event: MouseEvent) => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const rect = canvas.getBoundingClientRect()
-    const x = event.clientX - rect.left
-    const y = event.clientY - rect.top
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-		mousePosition.current = { x, y }
-  }
-
+	// Create mouse move event listener
   useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove)
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
     }
   }, [])
+
+	// Particle system data
+	const particles = useRef<Array<Particle>>([])
+	const animating = useRef<boolean>(false)
+
+	// Animation loop
+	let lastTime: number
+	const animate = (timestamp: number) => {
+		const canvas = canvasRef.current
+		if (!canvas) return
+
+		const ctx = canvas.getContext('2d')
+		if (!ctx) return
+
+		const draw = new Draw(ctx)
+
+		if (particles.current.length === 0) return
+		animating.current = true
+
+		if (!lastTime) lastTime = timestamp
+		const deltaTime = timestamp - lastTime
+		lastTime = timestamp
+
+		// Clear and draw the background
+		draw.clear()
+		draw.background(0, 0, dimensions.width, dimensions.height, '#343434')
+
+		// Handle particle system
+		const quadTree = new QuadTree(0, 0, dimensions.width, dimensions.height)
+		particles.current.forEach((particle) => quadTree.insert(particle))
+		Particle.updateAll(particles.current, quadTree, currMousePosition.current, deltaTime)
+		Particle.renderAll(particles.current, ctx)
+
+		window.requestAnimationFrame(animate)
+	}
+
+	// Particle creation and animation handler
+	useEffect(() => {
+		// If dimensions aren't bigger than 0, they haven't been set yet
+		if (dimensions.width === 0 && dimensions.height === 0) return
+
+		// If particles don't already exist, make them
+		if (particles.current.length === 0) {
+			particles.current = Particle.generateRandom(300, dimensions.width, dimensions.height)
+		}
+
+		// If we aren't already animating, start that
+		if (!animating.current) animating.current = true
+		window.requestAnimationFrame(animate)
+	}, [dimensions])
 
   return (
     <canvas
