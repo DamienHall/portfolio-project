@@ -13,6 +13,12 @@ export default function InteractiveBackground() {
     height: number
   }>({ width: 0, height: 0 })
 
+	// useRef for drawing dimensions
+	const drawDimensions = useRef<{
+		width: number
+		height: number
+	}>({ width: 0, height: 0 })
+
   // Window resize handling
   const resize = () => {
     setDimensions({
@@ -51,6 +57,17 @@ export default function InteractiveBackground() {
       window.removeEventListener('resize', resize)
     }
   }, [])
+
+	// Page Element Handling
+	const pageElements = useRef<Array<Element>>([])
+
+	// Grab page elements
+	useEffect(() => {
+		const rootElement = document.getElementById("root")
+		if (!rootElement) return
+		pageElements.current = Array.from(rootElement.children)
+		particleSystem.current.setElements(pageElements.current)
+	}, [])
 
   // Mouse data
   const lastMousePosition = useRef<{
@@ -117,13 +134,14 @@ export default function InteractiveBackground() {
 
     // Clear and draw the background
     draw.clear()
-    draw.background(0, 0, dimensions.width, dimensions.height, '#343434')
+    draw.background(0, 0, drawDimensions.current.width, drawDimensions.current.height, '#343434')
 
     // Handle particle system
-    const quadTree = new QuadTree(0, 0, dimensions.width, dimensions.height)
+    const quadTree = new QuadTree(0, 0, drawDimensions.current.width, drawDimensions.current.height)
     particleSystem.current.particles.forEach((particle) =>
       quadTree.insert(particle),
     )
+		quadTree.render(ctx)
     const mousePositionVector = new Vector2D(
       currMousePosition.current.x,
       currMousePosition.current.y,
@@ -149,6 +167,12 @@ export default function InteractiveBackground() {
   useEffect(() => {
     // If dimensions aren't bigger than 0, they haven't been set yet
     if (dimensions.width === 0 && dimensions.height === 0) return
+
+		// Update drawDimensions ref
+		drawDimensions.current = {
+			width: dimensions.width,
+			height: dimensions.height,
+		}
 
 		// Update particle system bounds
 		particleSystem.current.setBounds({

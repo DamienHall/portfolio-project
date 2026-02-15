@@ -49,6 +49,7 @@ export class ParticleSystem {
   }
   draw: Draw | null
   particles: Array<Particle>
+	htmlElements: Array<Element>
 
   constructor(
     bounds: {
@@ -61,10 +62,15 @@ export class ParticleSystem {
     this.bounds = bounds
     this.draw = null
     this.particles = []
+		this.htmlElements = []
   }
 
 	setDraw(draw: Draw) {
 		this.draw = draw
+	}
+
+	setElements(elements: Array<Element>) {
+		this.htmlElements = elements
 	}
 
   setBounds(bounds: { x: number; y: number; width: number; height: number }) {
@@ -168,6 +174,60 @@ export class ParticleSystem {
 					mouseSeparationVelocity.add(weightedVelocity)
 			}
 
+			// Create element separation velocity
+			let elementSeparationVelocity = Vector2D.zeroedVector
+			this.htmlElements.forEach((element) => {
+				if (element.tagName.toLowerCase() === 'canvas') return
+				const bounds = element.getBoundingClientRect()
+				const dFromTop = Math.abs(particle.position.y - particle.size / 2 - bounds.top)
+				const dFromBottom = Math.abs((bounds.top + bounds.height) - (particle.position.y + particle.size / 2))
+				const dFromLeft = Math.abs(particle.position.x - particle.size / 2 - bounds.left)
+				const dFromRight = Math.abs((bounds.width + bounds.left) - (particle.position.x + particle.size / 2))
+				const wallBounce = 0.2
+				
+				// If we are in between the left and right boundaries
+				if (particle.position.x >= bounds.left && particle.position.x <= bounds.left + bounds.width) {
+					if (dFromTop <= minDistanceFromBounds) {
+						if (dFromTop < 0) {
+							particle.position.y = particle.size / 2
+						}
+
+						const directionVector = new Vector2D(0, -1)
+						elementSeparationVelocity = elementSeparationVelocity.add(directionVector.scale(wallBounce))
+					}
+
+					if (dFromBottom <= minDistanceFromBounds) {
+						if (dFromTop < 0) {
+							particle.position.y = bounds.height - particle.size / 2
+						}
+
+						const directionVector = new Vector2D(0, 1)
+						elementSeparationVelocity = elementSeparationVelocity.add(directionVector.scale(wallBounce))
+					}
+				}
+
+				// If we are in betwen the top and bottom boundaries
+				if (particle.position.y >= bounds.top && particle.position.y <= bounds.top + bounds.height) {
+					if (dFromLeft <= minDistanceFromBounds) {
+						if (dFromTop < 0) {
+							particle.position.x = particle.size / 2
+						}
+
+						const directionVector = new Vector2D(-1, 0)
+						elementSeparationVelocity = elementSeparationVelocity.add(directionVector.scale(wallBounce))
+					}
+
+					if (dFromRight <= minDistanceFromBounds) {
+						if (dFromTop < 0) {
+							particle.position.x = bounds.width - particle.size / 2
+						}
+
+						const directionVector = new Vector2D(1, 0)
+						elementSeparationVelocity = elementSeparationVelocity.add(directionVector.scale(wallBounce))
+					}
+				}
+			})
+
 			// Create boundary separation velocity
 			const dFromTop = particle.position.y - particle.size / 2 - this.bounds.y
 			const dFromBottom = this.bounds.height - (particle.position.y + particle.size / 2)
@@ -215,6 +275,7 @@ export class ParticleSystem {
 			// Add all separation velocities to the acceleration
 			particle.acceleration = particle.acceleration.add(neighborSeparationVelocity)
 			particle.acceleration = particle.acceleration.add(mouseSeparationVelocity)
+			particle.acceleration = particle.acceleration.add(elementSeparationVelocity)
 			particle.acceleration = particle.acceleration.add(boundarySeparationVelocity)
 
 			// Update velocity by acceleration
