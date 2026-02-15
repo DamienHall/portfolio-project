@@ -1,4 +1,6 @@
 export class Vector2D {
+	static zeroedVector = new Vector2D(0, 0)
+
   x: number
   y: number
 
