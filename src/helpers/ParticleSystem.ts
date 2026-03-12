@@ -120,8 +120,8 @@ export class ParticleSystem {
       const searchArea = {
         x: particle.position.x - neighborSearchDistance,
         y: particle.position.y - neighborSearchDistance,
-        width: particle.position.x + neighborSearchDistance,
-        height: particle.position.y + neighborSearchDistance,
+        width: neighborSearchDistance * 2,
+        height: neighborSearchDistance * 2,
       }
       const neighbors = quadTree.findInArea(
         searchArea.x,
@@ -179,26 +179,28 @@ export class ParticleSystem {
 			this.htmlElements.forEach((element) => {
 				if (element.tagName.toLowerCase() === 'canvas') return
 				const bounds = element.getBoundingClientRect()
-				const dFromTop = Math.abs(particle.position.y - particle.size / 2 - bounds.top)
-				const dFromBottom = Math.abs((bounds.top + bounds.height) - (particle.position.y + particle.size / 2))
-				const dFromLeft = Math.abs(particle.position.x - particle.size / 2 - bounds.left)
-				const dFromRight = Math.abs((bounds.width + bounds.left) - (particle.position.x + particle.size / 2))
+				const dFromTop = bounds.top - (particle.position.y - particle.size / 2 )
+				const dFromBottom = (particle.position.y + particle.size / 2) - (bounds.top + bounds.height)
+				const dFromLeft = bounds.left - (particle.position.x - particle.size / 2)
+				const dFromRight = (particle.position.x + particle.size / 2) - (bounds.width + bounds.left)
 				const wallBounce = 0.2
 				
 				// If we are in between the left and right boundaries
 				if (particle.position.x >= bounds.left && particle.position.x <= bounds.left + bounds.width) {
-					if (dFromTop <= minDistanceFromBounds) {
-						if (dFromTop < 0) {
-							particle.position.y = particle.size / 2
+					if (Math.abs(dFromTop) <= minDistanceFromBounds) {
+						if (dFromTop <= particle.size) {
+							particle.position.y = bounds.top - particle.size / 2
+							particle.velocity.y = -particle.velocity.y
 						}
 
 						const directionVector = new Vector2D(0, -1)
 						elementSeparationVelocity = elementSeparationVelocity.add(directionVector.scale(wallBounce))
 					}
 
-					if (dFromBottom <= minDistanceFromBounds) {
-						if (dFromTop < 0) {
-							particle.position.y = bounds.height - particle.size / 2
+					if (Math.abs(dFromBottom) <= minDistanceFromBounds) {
+						if (dFromBottom <= particle.size) {
+							particle.position.y = bounds.top + bounds.height + particle.size / 2
+							particle.velocity.y = -particle.velocity.y
 						}
 
 						const directionVector = new Vector2D(0, 1)
@@ -208,18 +210,20 @@ export class ParticleSystem {
 
 				// If we are in betwen the top and bottom boundaries
 				if (particle.position.y >= bounds.top && particle.position.y <= bounds.top + bounds.height) {
-					if (dFromLeft <= minDistanceFromBounds) {
-						if (dFromTop < 0) {
-							particle.position.x = particle.size / 2
+					if (Math.abs(dFromLeft) <= minDistanceFromBounds) {
+						if (dFromLeft <= particle.size) {
+							particle.position.x = bounds.left - particle.size / 2
+							particle.velocity.x = -particle.velocity.x
 						}
 
 						const directionVector = new Vector2D(-1, 0)
 						elementSeparationVelocity = elementSeparationVelocity.add(directionVector.scale(wallBounce))
 					}
 
-					if (dFromRight <= minDistanceFromBounds) {
-						if (dFromTop < 0) {
-							particle.position.x = bounds.width - particle.size / 2
+					if (Math.abs(dFromRight) <= minDistanceFromBounds) {
+						if (dFromRight <= particle.size) {
+							particle.position.x = bounds.left + bounds.width + particle.size / 2
+							particle.velocity.x = -particle.velocity.x
 						}
 
 						const directionVector = new Vector2D(1, 0)
@@ -239,6 +243,7 @@ export class ParticleSystem {
 			if (dFromTop <= minDistanceFromBounds) {
 				if (dFromTop < 0) {
 					particle.position.y = particle.size / 2
+					particle.velocity.y = -particle.velocity.y
 				}
 
 				const directionVector = new Vector2D(0, 1)
@@ -246,8 +251,9 @@ export class ParticleSystem {
 			}
 
 			if (dFromBottom <= minDistanceFromBounds) {
-				if (dFromTop < 0) {
+				if (dFromBottom < 0) {
 					particle.position.y = this.bounds.height - particle.size / 2
+					particle.velocity.y = -particle.velocity.y
 				}
 
 				const directionVector = new Vector2D(0, -1)
@@ -255,8 +261,9 @@ export class ParticleSystem {
 			}
 
 			if (dFromLeft <= minDistanceFromBounds) {
-				if (dFromTop < 0) {
+				if (dFromLeft < 0) {
 					particle.position.x = particle.size / 2
+					particle.velocity.x = -particle.velocity.x
 				}
 
 				const directionVector = new Vector2D(1, 0)
@@ -264,8 +271,9 @@ export class ParticleSystem {
 			}
 
 			if (dFromRight <= minDistanceFromBounds) {
-				if (dFromTop < 0) {
+				if (dFromRight < 0) {
 					particle.position.x = this.bounds.width - particle.size / 2
+					particle.velocity.x = -particle.velocity.x
 				}
 
 				const directionVector = new Vector2D(-1, 0)
@@ -273,9 +281,9 @@ export class ParticleSystem {
 			}
 
 			// Add all separation velocities to the acceleration
-			particle.acceleration = particle.acceleration.add(neighborSeparationVelocity)
-			particle.acceleration = particle.acceleration.add(mouseSeparationVelocity)
-			particle.acceleration = particle.acceleration.add(elementSeparationVelocity)
+			particle.acceleration = particle.acceleration.add(neighborSeparationVelocity.scale(0.1))
+			particle.acceleration = particle.acceleration.add(mouseSeparationVelocity.scale(2))
+			particle.acceleration = particle.acceleration.add(elementSeparationVelocity.scale(0.1))
 			particle.acceleration = particle.acceleration.add(boundarySeparationVelocity)
 
 			// Update velocity by acceleration
