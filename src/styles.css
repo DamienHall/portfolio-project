@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@theme {
+	--color-chocolate: #362718;
+	--color-mocha: #74512D;
+	--color-almond: #AF8F6F;
+	--color-coldfoam: #F8F4F1;
+}
+
 body {
   @apply m-0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
