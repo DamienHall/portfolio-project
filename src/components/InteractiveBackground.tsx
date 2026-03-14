@@ -63,9 +63,7 @@ export default function InteractiveBackground() {
 
 	// Grab page elements
 	useEffect(() => {
-		const rootElement = document.getElementById("root")
-		if (!rootElement) return
-		pageElements.current = Array.from(rootElement.children)
+		pageElements.current = Array.from(document.getElementsByClassName("particleInteractive"))
 		particleSystem.current.setElements(pageElements.current)
 	}, [])
 
