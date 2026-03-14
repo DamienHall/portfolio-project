@@ -10,7 +10,7 @@ export default function ProjectCard({
 	tags: Array<string>
 }) {
   return (
-    <div>
+    <div className="particleInteractive">
       <div className="max-w-sm rounded overflow-hidden shadow-lg backdrop-blur-sm bg-white/30">
         <img className="" src={imageURL} alt="Project Image" />
         <div className="px-6 py-4">
