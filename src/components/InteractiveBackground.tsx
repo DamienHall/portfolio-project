@@ -132,7 +132,7 @@ export default function InteractiveBackground() {
 
     // Clear and draw the background
     draw.clear()
-    draw.background(0, 0, drawDimensions.current.width, drawDimensions.current.height, '#343434')
+    draw.background(0, 0, drawDimensions.current.width, drawDimensions.current.height, '#362718')
 
     // Handle particle system
     const quadTree = new QuadTree(0, 0, drawDimensions.current.width, drawDimensions.current.height)
