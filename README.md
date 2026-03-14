@@ -39,8 +39,13 @@ On top of these projects, I will also include other sections in this portfolio t
 3. Intuitive and reactive UI
 
 ### Color Palette;
-Jett Gray - #343434
-Bone White - #F9F6EE
+Chocolate: #362718
+Mocha: #74512D
+Almond: #AF8F6F
+Coldfoam: #F8F4F1
+
 
 ## How to run
 npm run dev
+
+Then go to http://localhost:3000/module-projects
