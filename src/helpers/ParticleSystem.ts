@@ -78,6 +78,7 @@ export class ParticleSystem {
   }
 
   generate(particleCount: number, size: number, color: string) {
+		const generateRandomColor = color === 'random'
     for (let i = 0; i <= particleCount; i++) {
       // Create a random position within the bounds
       const position = new Vector2D(
@@ -86,7 +87,7 @@ export class ParticleSystem {
       )
 
       // Handle random colors if wanted
-      if (color === 'random') {
+      if (generateRandomColor) {
         color = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`
       }
 
@@ -179,16 +180,16 @@ export class ParticleSystem {
 			this.htmlElements.forEach((element) => {
 				if (element.tagName.toLowerCase() === 'canvas') return
 				const bounds = element.getBoundingClientRect()
-				const dFromTop = bounds.top - (particle.position.y - particle.size / 2 )
-				const dFromBottom = (particle.position.y + particle.size / 2) - (bounds.top + bounds.height)
-				const dFromLeft = bounds.left - (particle.position.x - particle.size / 2)
-				const dFromRight = (particle.position.x + particle.size / 2) - (bounds.width + bounds.left)
-				const wallBounce = 0.2
-				
-				// If we are in between the left and right boundaries
-				if (particle.position.x >= bounds.left && particle.position.x <= bounds.left + bounds.width) {
-					if (Math.abs(dFromTop) <= minDistanceFromBounds) {
-						if (dFromTop <= particle.size) {
+				const dFromTop = bounds.top - (particle.position.y + particle.size / 2 )
+				const dFromBottom = (particle.position.y - particle.size / 2) - bounds.bottom
+				const dFromLeft = bounds.left - (particle.position.x + particle.size / 2)
+				const dFromRight = (particle.position.x - particle.size / 2) - bounds.right
+				const wallBounce = 0.0
+
+				// If we are in between the left and right boundaries (Element x -> w)
+				if (particle.position.x >= bounds.left && particle.position.x <= bounds.right) {
+					if (dFromTop <= minDistanceFromElements && particle.position.y < bounds.bottom && dFromTop > dFromBottom) {
+						if (dFromTop <= 0) {
 							particle.position.y = bounds.top - particle.size / 2
 							particle.velocity.y = -particle.velocity.y
 						}
@@ -197,8 +198,8 @@ export class ParticleSystem {
 						elementSeparationVelocity = elementSeparationVelocity.add(directionVector.scale(wallBounce))
 					}
 
-					if (Math.abs(dFromBottom) <= minDistanceFromBounds) {
-						if (dFromBottom <= particle.size) {
+					if (dFromBottom <= minDistanceFromElements && particle.position.y > bounds.top && dFromBottom > dFromTop) {
+						if (dFromBottom <= 0) {
 							particle.position.y = bounds.top + bounds.height + particle.size / 2
 							particle.velocity.y = -particle.velocity.y
 						}
@@ -208,10 +209,10 @@ export class ParticleSystem {
 					}
 				}
 
-				// If we are in betwen the top and bottom boundaries
-				if (particle.position.y >= bounds.top && particle.position.y <= bounds.top + bounds.height) {
-					if (Math.abs(dFromLeft) <= minDistanceFromBounds) {
-						if (dFromLeft <= particle.size) {
+				// If we are in betwen the top and bottom boundaries (Element y -> height)
+				if (particle.position.y >= bounds.top && particle.position.y <= bounds.bottom) {
+					if (dFromLeft <= minDistanceFromElements && particle.position.x < bounds.right && dFromLeft > dFromRight) {
+						if (dFromLeft <= 0 ) {
 							particle.position.x = bounds.left - particle.size / 2
 							particle.velocity.x = -particle.velocity.x
 						}
@@ -220,9 +221,9 @@ export class ParticleSystem {
 						elementSeparationVelocity = elementSeparationVelocity.add(directionVector.scale(wallBounce))
 					}
 
-					if (Math.abs(dFromRight) <= minDistanceFromBounds) {
-						if (dFromRight <= particle.size) {
-							particle.position.x = bounds.left + bounds.width + particle.size / 2
+					if (dFromRight <= minDistanceFromElements && particle.position.x > bounds.left && dFromRight > dFromLeft) {
+						if (dFromRight <= 0) {
+							particle.position.x = bounds.right + particle.size / 2
 							particle.velocity.x = -particle.velocity.x
 						}
 
@@ -232,12 +233,12 @@ export class ParticleSystem {
 				}
 			})
 
-			// Create boundary separation velocity
+			// Create boundary separation velocity (QuadTree Area)
 			const dFromTop = particle.position.y - particle.size / 2 - this.bounds.y
 			const dFromBottom = this.bounds.height - (particle.position.y + particle.size / 2)
 			const dFromLeft = particle.position.x - particle.size / 2 - this.bounds.x
 			const dFromRight = this.bounds.width - (particle.position.x + particle.size / 2)
-			const wallBounce = 0.2
+			const wallBounce = 0.0
 			let boundarySeparationVelocity = Vector2D.zeroedVector
 
 			if (dFromTop <= minDistanceFromBounds) {
@@ -280,25 +281,36 @@ export class ParticleSystem {
 				boundarySeparationVelocity = boundarySeparationVelocity.add(directionVector.scale(wallBounce))
 			}
 
-			// Technically use minDistanceFromElements
-			if (0 < minDistanceFromElements) {
-
-			}
-
 			// Add all separation velocities to the acceleration
-			particle.acceleration = particle.acceleration.add(neighborSeparationVelocity.scale(0.1))
+			particle.acceleration = particle.acceleration.add(neighborSeparationVelocity.scale(2))
 			particle.acceleration = particle.acceleration.add(mouseSeparationVelocity.scale(2))
-			particle.acceleration = particle.acceleration.add(elementSeparationVelocity.scale(0.1))
+			particle.acceleration = particle.acceleration.add(elementSeparationVelocity)
 			particle.acceleration = particle.acceleration.add(boundarySeparationVelocity)
 
 			// Update velocity by acceleration
-			particle.velocity = particle.velocity.add(particle.acceleration.scale(deltaTime)).capTo(10)
+			particle.velocity = particle.velocity.add(particle.acceleration.scale(deltaTime)).capTo(20)
 
 			// Add friction
 			particle.velocity = particle.velocity.scale(friction)
 
 			// Reset acceleration
 			particle.acceleration = particle.acceleration.scale(0)
+
+			// If particle is still inside an element, randomize its position
+			// this.htmlElements.forEach((element) => {
+			// 	if (element.tagName.toLowerCase() === 'canvas') return
+			// 	const bounds = element.getBoundingClientRect()
+			// 	const px = particle.position.x
+			// 	const py = particle.position.y
+			// 	const size = particle.size
+			// 	if ((px + size / 2 > bounds.left && px - size / 2 < bounds.right) && (py + size / 2 > bounds.top && py - size / 2 < bounds.bottom)) {
+			// 		const randomPosition = new Vector2D(
+      // 		  this.bounds.x + Math.random() * (this.bounds.width - this.bounds.x),
+      // 		  this.bounds.y + Math.random() * (this.bounds.height - this.bounds.y),
+      // 		)
+			// 		particle.setPosition(randomPosition.x, randomPosition.y)
+			// 	}
+			// })
     })
 
     // Update all positions
