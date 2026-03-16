@@ -280,6 +280,11 @@ export class ParticleSystem {
 				boundarySeparationVelocity = boundarySeparationVelocity.add(directionVector.scale(wallBounce))
 			}
 
+			// Technically use minDistanceFromElements
+			if (0 < minDistanceFromElements) {
+
+			}
+
 			// Add all separation velocities to the acceleration
 			particle.acceleration = particle.acceleration.add(neighborSeparationVelocity.scale(0.1))
 			particle.acceleration = particle.acceleration.add(mouseSeparationVelocity.scale(2))
