@@ -139,16 +139,17 @@ export default function InteractiveBackground() {
     particleSystem.current.particles.forEach((particle) =>
       quadTree.insert(particle),
     )
+		
 		// quadTree.render(ctx)
     const mousePositionVector = new Vector2D(
       currMousePosition.current.x,
       currMousePosition.current.y,
     )
     particleSystem.current.update(
-      10,
-      10,
-      0,
       20,
+      0,
+      0,
+			20,
       100,
       0.98,
       mousePositionVector,
@@ -182,7 +183,7 @@ export default function InteractiveBackground() {
 
     // If particles don't already exist, make them
     if (particleSystem.current.particles.length === 0) {
-      particleSystem.current.generate(dimensions.width / 1, 5, 'White')
+      particleSystem.current.generate(dimensions.width / 1, 8, "#F8F4F1")
     }
 
     // If we aren't already animating, start that
