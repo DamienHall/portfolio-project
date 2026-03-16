@@ -7,7 +7,7 @@ export default function ProjectCard({
 }: {
   imageURL: string
   title: string
-  description: string
+  description: React.ReactNode
 	ghLink: string,
 	tags: Array<string>
 }) {
@@ -20,7 +20,9 @@ export default function ProjectCard({
 					<p className="text-mocha text-base font-semibold">
 					Checkout the project here:
 					<span className="text-almond"><a href={ghLink}> {ghLink}</a></span></p>
-          <p className="pt-4 text-mocha text-base whitespace-pre-wrap">{description}</p>
+          <div className="pt-4 text-mocha text-base whitespace-pre-wrap">
+						{description}
+					</div>
         </div>
         <div className="px-6 pt-4 pb-2">
 					{
