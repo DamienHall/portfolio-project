@@ -9,7 +9,7 @@ export const Route = createFileRoute('/')({
       <InteractiveBackground />
       <ContentBackground>
         <ProjectCard
-          imageURL=""
+          imageURL="./public/FrontEndProject.jpg"
           title="Front End Project"
           ghLink="https://github.com/FrontEndProjectMV/music-discovery-app/"
           description=<ul className="list-disc ml-4">
@@ -36,7 +36,7 @@ export const Route = createFileRoute('/')({
           tags={["Spotify OAuth2", "React", "MUI", "Chroma.js", "Lodash", "Spotify API"]}
         />
         <ProjectCard
-          imageURL=""
+          imageURL="./public/BackEndProject.jpg"
           title="Back End Project"
           ghLink="https://github.com/DamienAndDustinBackend/backend-project"
           description=<ul className="list-disc ml-4">
@@ -89,7 +89,7 @@ export const Route = createFileRoute('/')({
           tags={["Golang", "GORM", "Gin", "Postgres", "Custom JWT/Auth"]}
         />
         <ProjectCard
-          imageURL=""
+          imageURL="./public/DeploymentProject.jpg"
           title="Deployment Project"
           ghLink="https://github.com/EmmanuelDamienDustinDeploymentProject/DeploymentProject"
           description=<ul className="list-disc ml-4">
@@ -116,7 +116,7 @@ export const Route = createFileRoute('/')({
           tags={["MCP", "Terraform", "Docker", "Trivy", "OAuth", "Linting"]}
         />
         <ProjectCard
-          imageURL=""
+          imageURL="./public/InventoryProject.jpg"
           title="Inventory Project"
           ghLink="https://github.com/DJP-SWE2526/inventory-app"
           description=<ul className="list-disc ml-4">
@@ -143,7 +143,7 @@ export const Route = createFileRoute('/')({
           tags={["Sequelize", "REST API", "React"]}
         />
         <ProjectCard
-          imageURL=""
+          imageURL="./public/HackathonProject.jpg"
           title="Final Bootcamp Hackathon Project"
           ghLink="https://github.com/DamienHall/DM-DriveAnalyzer"
           description=<ul className="list-disc ml-4">
