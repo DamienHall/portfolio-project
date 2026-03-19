@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import Header from '@/components/Header'
+import InteractiveBackground from '@/components/InteractiveBackground'
+import ContentBackground from '@/components/ContentBackground'
+import ProjectCard from '@/components/ProjectCard'
 
 export const Route = createFileRoute('/')({
   component: () => (
