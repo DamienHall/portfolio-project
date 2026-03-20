@@ -7,12 +7,18 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [devtools(), viteReact(), tailwindcss(), tanstackRouter({
-		autoCodeSplitting: true,
-	})],
+  plugins: [
+    devtools(),
+    viteReact(),
+    tailwindcss(),
+    tanstackRouter({
+      autoCodeSplitting: true,
+    }),
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+	base: '/portfolio-project/'
 })
