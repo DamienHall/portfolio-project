@@ -11,8 +11,7 @@
 		"lint": "eslint",
 		"format": "prettier",
 		"check": "prettier --write . && eslint --fix",
-		"predeploy": "npm run build",
-		"deploy": "gh-pages -d build"
+		"deploy": "npm run build && gh-pages -d dist"
 	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.0.6",
