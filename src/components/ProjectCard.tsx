@@ -14,7 +14,7 @@ export default function ProjectCard({
   tags: Array<string>
 }) {
   return (
-    <div className="pt-8 w-4/5">
+    <div className="m-6">
       <div className="particleInteractive rounded overflow-hidden shadow-lg bg-coldfoam">
         <img className="" src={imageURL} alt="Project Image" />
         <div className="px-6 py-4">

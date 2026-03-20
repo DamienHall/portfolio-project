@@ -4,7 +4,7 @@ export default function ContentBackground({ children }: { children: React.ReactN
 	
 	return (
 		<>
-			<div className="flex items-center justify-center flex-col sm:bg-coldfoam/20 backdrop-blur-[3px] lg:w-6/10 mg:4/4 sm:min-w-[700px] m-10 pb-8 rounded">
+			<div className="flex items-center justify-center flex-col sm:bg-coldfoam/20 backdrop-blur-[3px] lg:w-6/10 sm:min-w-[70px] m-10 pb-8 rounded">
 				{children}
 			</div>
 		</>
