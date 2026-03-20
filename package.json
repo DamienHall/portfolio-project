@@ -10,9 +10,7 @@
 		"test": "vitest run",
 		"lint": "eslint",
 		"format": "prettier",
-		"check": "prettier --write . && eslint --fix",
-		"predeploy": "npm run build",
-		"deploy": "gh-pages -d build"
+		"check": "prettier --write . && eslint --fix"
 	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.0.6",
