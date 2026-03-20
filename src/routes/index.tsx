@@ -92,7 +92,7 @@ export const Route = createFileRoute('/')({
           ]}
         />
         <ProjectCard
-          imageURL="./public/BackEndProject.jpg"
+          imageURL="BackEndProject.jpg"
           title="Back End Project"
           ghLink="https://github.com/DamienAndDustinBackend/backend-project"
           description=<ul className="list-disc ml-4">
@@ -212,7 +212,7 @@ type Tag struct {
           tags={['Golang', 'GORM', 'Gin', 'Postgres', 'Go JWT/Auth']}
         />
         <ProjectCard
-          imageURL="./public/DeploymentProject.jpg"
+          imageURL="DeploymentProject.jpg"
           title="Deployment Project"
           ghLink="https://github.com/EmmanuelDamienDustinDeploymentProject/DeploymentProject"
           description=<ul className="list-disc ml-4">
@@ -239,7 +239,7 @@ type Tag struct {
           tags={['MCP', 'Terraform', 'Docker', 'Trivy', 'OAuth', 'Linting']}
         />
         <ProjectCard
-          imageURL="./public/InventoryProject.jpg"
+          imageURL="InventoryProject.jpg"
           title="Inventory Project"
           ghLink="https://github.com/DJP-SWE2526/inventory-app"
           description=<ul className="list-disc ml-4">
@@ -266,7 +266,7 @@ type Tag struct {
           tags={['Sequelize', 'REST API', 'React']}
         />
         <ProjectCard
-          imageURL="./public/HackathonProject.jpg"
+          imageURL="HackathonProject.jpg"
           title="Final Bootcamp Hackathon Project"
           ghLink="https://github.com/DamienHall/DM-DriveAnalyzer"
           description=<ul className="list-disc ml-4">
