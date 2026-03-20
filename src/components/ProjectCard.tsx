@@ -14,14 +14,14 @@ export default function ProjectCard({
   tags: Array<string>
 }) {
   return (
-    <div className="pt-8 w-4/5">
+    <div className="m-6">
       <div className="particleInteractive rounded overflow-hidden shadow-lg bg-coldfoam">
         <img className="" src={imageURL} alt="Project Image" />
         <div className="px-6 py-4">
           <div className="font-bold w-4/5 p-4 mb-6 text-xl text-mocha border-b-2">
             {title}
           </div>
-						<p className="text-mocha text-base font-semibold">
+						<p className="text-mocha text-base font-semibold truncate ...">
           	  Checkout the project here:
 						<span className="text-coldfoam bg-almond px-2 py-1 ml-2">
           	  <a href={ghLink}>{ghLink}</a>
