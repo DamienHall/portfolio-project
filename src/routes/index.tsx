@@ -11,7 +11,7 @@ export const Route = createFileRoute('/')({
       <InteractiveBackground />
       <ContentBackground>
         <ProjectCard
-          imageURL="./public/FrontEndProject.jpg"
+          imageURL="FrontEndProject.jpg"
           title="Front End Project"
           ghLink="https://github.com/FrontEndProjectMV/music-discovery-app/"
           description=<ul className="list-disc ml-4">
