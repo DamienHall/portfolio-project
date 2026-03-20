@@ -1,8 +1,8 @@
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { createFileRoute } from '@tanstack/react-router'
 import InteractiveBackground from '@/components/InteractiveBackground'
 import ContentBackground from '@/components/ContentBackground'
 import ProjectCard from '@/components/ProjectCard'
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import CodeSnippet from '@/components/CodeSnippet'
 
 export const Route = createFileRoute('/')({
