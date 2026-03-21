@@ -11,7 +11,7 @@ export default function CodeSnippet({
   theme: { [key: string]: CSSProperties }
 }) {
   return (
-    <SyntaxHighlighter language={language} style={theme}>
+    <SyntaxHighlighter language={language} style={theme} className="max-h-[500px]">
       {code}
     </SyntaxHighlighter>
   )

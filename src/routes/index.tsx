@@ -5,11 +5,11 @@ import ContentBackground from '@/components/ContentBackground'
 import ProjectCard from '@/components/ProjectCard'
 import CodeSnippet from '@/components/CodeSnippet'
 import Link from '@/components/Link'
+import { Code } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
   component: () => (
-    <div id="root" className="flex justify-center">
-      <InteractiveBackground />
+    <div id="root" className="flex justify-center bg-chocolate">
       <ContentBackground>
         <ProjectCard
           imageURL="FrontEndProject.jpg"
@@ -249,17 +249,34 @@ authorized.DELETE("/files/:id", app.deleteFile)`}
               GitHub workflows do and code snippets relating to how OAuth
               implemented. Starting off with GitHub workflows I'll describe our
               GitHub actions setup. We have four yml files that tell GitHub what
-              to do, those four being <Link url="" text="deploy.yml" />,{' '}
-              <Link url="" text="go-build-lint-test.yml" />,{' '}
-              <Link url="" text="iac-linting.yml" /> and{' '}
-              <Link url="" text="trivy.yml" />. The deploy.yml configures a
-              docker container with Ubuntu as its image to then deploy onto an
-              AWS ECS cluster. For linting we created the go-build-lint-test.yml
-              to catch code issues in our go files and iac-linting.yml to lint
-              our Terraform configuration. To handle security and check for
-              obvious vulnerabilities we used Trivy with the trivy.yml workflow.{' '}
-              <br /> Now taking a look into the implementation of OAuth we can
-              see that we are using GitHub OAuth here:
+              to do, those four being{' '}
+              <Link
+                url="https://github.com/EmmanuelDamienDustinDeploymentProject/DeploymentProject/blob/main/.github/workflows/deploy.yml"
+                text="deploy.yml"
+              />
+              ,{' '}
+              <Link
+                url="https://github.com/EmmanuelDamienDustinDeploymentProject/DeploymentProject/blob/main/.github/workflows/go-build-lint-test.yml"
+                text="go-build-lint-test.yml"
+              />
+              ,{' '}
+              <Link
+                url="https://github.com/EmmanuelDamienDustinDeploymentProject/DeploymentProject/blob/main/.github/workflows/iac-linting.yml"
+                text="iac-linting.yml"
+              />{' '}
+              and{' '}
+              <Link
+                url="https://github.com/EmmanuelDamienDustinDeploymentProject/DeploymentProject/blob/main/.github/workflows/trivy.yml"
+                text="trivy.yml"
+              />
+              . The deploy.yml configures a docker container with Ubuntu as its
+              image to then deploy onto an AWS ECS cluster. For linting we
+              created the go-build-lint-test.yml to catch code issues in our go
+              files and iac-linting.yml to lint our Terraform configuration. To
+              handle security and check for obvious vulnerabilities we used
+              Trivy with the trivy.yml workflow. <br /> Now taking a look into
+              the implementation of OAuth we can see that we are using GitHub
+              OAuth here:
               <CodeSnippet
                 language="go"
                 code={`// Set up GitHub OAuth parameters
@@ -301,26 +318,110 @@ http.Redirect(w, r, githubAuthURL.String(), http.StatusFound)`}
           ghLink="https://github.com/DJP-SWE2526/inventory-app"
           description=<ul className="list-disc ml-4">
             <li>
-              <strong>Purpose/Goal:</strong>
+              <strong>Purpose/Goal:</strong> This application was designed to
+              showcase our abilities to interact with an external API, render
+              its content dynamically and asynchronously, and handle that
+              content using a SQL database.
             </li>
             <li>
-              <strong>Features:</strong>
+              <strong>Features:</strong> The project includes search
+              functionality using database query filtering, an SQL database with
+              seeding capabilities and methods to add, edit, and delete entries
+              in the database and is all contained within an SPA.
             </li>
             <li>
-              <strong>Contributions:</strong>
+              <strong>Contributions:</strong> I mainly contributed on the UI
+              portion of things, specifically on layout and stylization with
+              MUI. Other areas I worked on were on the backend, I created the
+              seeding functionality for the database and added multiple API
+              routes.
             </li>
             <li>
-              <strong>Skills:</strong>
+              <strong>Skills:</strong> REST API, React, ORM and SQL skills were
+              all demonstrated within the project. We used REST principles for
+              the API we created and ensured that all elements on the page were
+              correctly styled with MUI. When handling anything within the
+              database we made sure to do it throught the Sequelize ORM.
             </li>
             <li>
-              <strong>How the project demonstrates these skills:</strong>
+              <strong>How the project demonstrates these skills:</strong> API
+              skills were demonstrated within the{' '}
+              <Link
+                url="https://github.com/DJP-SWE2526/inventory-app/blob/main/server/routes/items.js"
+                text="items.js route"
+              />
+              , for example you can see in this snippet how we created the "get
+              item by id" functionality:
+              <CodeSnippet
+                language="javascript"
+                code={`router.get("/:id", async (req,res) => {
+  try{
+      const findOneItem = await Item.findByPk(req.params.id);
+      if(findOneItem) {
+          res.status(200).json(findOneItem);
+      } else{
+          return res.status(404).json({ error : "Item not found in database"});
+      }   
+  } catch(error) {
+      res.status(500).json({ error: "Failed to retrieve single item"});
+  }
+})`}
+                theme={dark}
+              />
+              SQL and Sequelize ORM skills were shown in the{' '}
+              <Link
+                url="https://github.com/DJP-SWE2526/inventory-app/tree/main/server/models"
+                text="models directory"
+              />
+              , example being the Item model:
+              <CodeSnippet
+                language="javascript"
+                code={`const { DataTypes, Model } = require("sequelize");
+const sequelize = require("../db");
+
+class Item extends Model {}
+
+Item.init(
+  {
+    name: DataTypes.STRING,
+    description: DataTypes.STRING,
+    price: DataTypes.INTEGER, 
+    category: DataTypes.STRING,
+    image: DataTypes.STRING,
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    }
+  },
+  {
+    sequelize,
+    modelName: "Item"
+  }
+);
+
+module.exports = Item;`}
+                theme={dark}
+              />
+              All React skills were all shown via the UI, you can see that it's
+              all contained within a single page and has multiple screens to
+              handle add, edit and delete functionality of data.
             </li>
             <li>
-              <strong>Takeaways:</strong>
+              <strong>Takeaways:</strong> Writing applications as an SPA is a
+              great way to reduce complexity, especially when deploying your
+              website and overall leads to a better structure if your
+              application is has few pages. Another takeaway was that working
+              with a team requires alot more awareness regarding what code you
+              touch and how much you change, for example, I tried to let my team
+              know when I was working on a refactor of the routing system for
+              the pages so that we didn't have horrible merge conflicts. This
+              lead to a clean refactor and allowed for the rest of the team to
+              shift priorities onto writing out more of the API.
             </li>
           </ul>
           ytEmbedURL="https://www.youtube.com/embed/MFk8Emz2Ixg?si=xMCHvGBnbc5krV8o"
-          tags={['Sequelize', 'REST API', 'React']}
+          tags={['SQL', 'Sequelize', 'REST API', 'React']}
         />
         <ProjectCard
           imageURL="HackathonProject.jpg"
