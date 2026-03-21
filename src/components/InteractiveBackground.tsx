@@ -183,7 +183,7 @@ export default function InteractiveBackground() {
 
     // If particles don't already exist, make them
     if (particleSystem.current.particles.length === 0) {
-      particleSystem.current.generate(dimensions.width / 1, 8, "#F8F4F1")
+      particleSystem.current.generate(dimensions.width / 10, 8, "#F8F4F1")
     }
 
     // If we aren't already animating, start that

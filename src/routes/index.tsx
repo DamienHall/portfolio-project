@@ -9,7 +9,7 @@ import OverviewCard from '@/components/OverviewCard'
 
 export const Route = createFileRoute('/')({
   component: () => (
-    <div id="root" className="flex justify-center bg-chocolate">
+    <div id="root" className="flex justify-center">
 			<InteractiveBackground />
       <ContentBackground>
 				<OverviewCard />

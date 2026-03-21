@@ -81,10 +81,21 @@ export class ParticleSystem {
 		const generateRandomColor = color === 'random'
     for (let i = 0; i <= particleCount; i++) {
       // Create a random position within the bounds
-      const position = new Vector2D(
+      let position = new Vector2D(
         this.bounds.x + Math.random() * (this.bounds.width - this.bounds.x),
         this.bounds.y + Math.random() * (this.bounds.height - this.bounds.y),
       )
+
+			this.htmlElements.forEach((element) => {
+				if (element.tagName.toLowerCase() === 'canvas') return
+				const bounds = element.getBoundingClientRect()
+				const insideX = position.x >= bounds.left && position.x <= bounds.right
+				const insideY = position.y >= bounds.top && position.y <= bounds.bottom
+				if (insideX && insideY) {
+					position = new Vector2D(0, 0)
+				}
+			})
+
 
       // Handle random colors if wanted
       if (generateRandomColor) {
