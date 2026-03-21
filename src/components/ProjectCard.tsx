@@ -1,3 +1,5 @@
+import Link from './Link'
+
 export default function ProjectCard({
   imageURL,
   title,
@@ -21,12 +23,10 @@ export default function ProjectCard({
           <div className="font-bold w-4/5 p-4 mb-6 text-xl text-mocha border-b-2">
             {title}
           </div>
-						<p className="text-mocha text-base font-semibold truncate ...">
-          	  Checkout the project here:
-						<span className="text-coldfoam bg-almond px-2 py-1 ml-2">
-          	  <a href={ghLink}>{ghLink}</a>
-          	</span>
-          	</p>
+          <p className="text-mocha text-base font-semibold truncate ...">
+						{"Checkout the project here: "}
+            <Link url={ghLink} text={ghLink} />
+          </p>
           <div className="pt-4 text-mocha text-base whitespace-pre-wrap">
             {description}
             <iframe
