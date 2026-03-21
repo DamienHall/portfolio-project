@@ -5,11 +5,11 @@ import ContentBackground from '@/components/ContentBackground'
 import ProjectCard from '@/components/ProjectCard'
 import CodeSnippet from '@/components/CodeSnippet'
 import Link from '@/components/Link'
-import { Code } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
   component: () => (
     <div id="root" className="flex justify-center bg-chocolate">
+			<InteractiveBackground />
       <ContentBackground>
         <ProjectCard
           imageURL="FrontEndProject.jpg"
